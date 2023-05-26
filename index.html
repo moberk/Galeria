@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GalerIA</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    .loader {
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid #3498db;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .imagen-generada {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .imagen-container {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+      padding: 10%;
+    }
+
+    .imagen-caption {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Galer I.A</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Acerca de</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Servicios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://wa.me/525552132072?text=Hola%20tengo%20preguntas">Contacto</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Conoce Galer I.A.</h1>
+    <p>Imagina, escribe, elige, imprime en HD tu obra y recibela en tu casa montada en un bastidor </p>
+    <div class="container" id="promptContainer">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Dame una idea de lo que estás pensando y lo haré imagen</h5>
+              <input type="text" class="form-control" id="promptInput" placeholder="una playa Oaxaqueña al atardecer en pintura digital">
+              <hr>
+              <button class="btn btn-primary float-right" id="generarBtn">Generar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="imagenesContainer" class="row mt-4"></div>
+    
+    <div id="loaderContainer" class="text-center"></div>
+  </div>
+    
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  var generarBtn = document.getElementById('generarBtn');
+  var promptInput = document.getElementById('promptInput');
+  var imagenesContainer = document.getElementById('imagenesContainer');
+  var requestCount = 0;
+
+  generarBtn.addEventListener('click', function() {
+    if (requestCount >= 2) {
+          alert('Has alcanzado el límite máximo de generaciones de imágenes.');
+          return;
+        }
+    
+    var prompt = promptInput.value;
+
+    // Mostrar animación de carga
+    imagenesContainer.innerHTML = '<div class="loader"></div>';
+
+    fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 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' // Reemplaza <TU_CLAVE_DE_API> con tu clave de API
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        n: 2,
+        size: '1024x1024'
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la llamada a la API');
+      }
+      return response.json();
+    })
+    .then(data => {
+      var imagenes = data.data;
+
+      imagenesContainer.innerHTML = '';
+      imagenes.forEach(function(imagen) {
+        var imgContainer = document.createElement('div');
+        imgContainer.classList.add('imagen-container');
+
+        var imgElement = document.createElement('img');
+        imgElement.src = imagen.url;
+        imgElement.classList.add('imagen-generada');
+
+        var btnElement = document.createElement('button');
+        btnElement.textContent = 'Imprimir en Canva';
+        btnElement.classList.add('btn', 'btn-primary');
+
+        // URL dinámica para dirigir al usuario a WhatsApp con el mensaje y la URL de la imagen
+        var whatsappUrl = 'https://wa.me/525552132072?text=Hola%20me%20gusta%20esta%20imagen%20' + encodeURIComponent(imagen.url);
+        btnElement.addEventListener('click', function() {
+          window.location.href = whatsappUrl;
+        });
+
+        imgContainer.appendChild(imgElement);
+        imgContainer.appendChild(btnElement);
+
+        imagenesContainer.appendChild(imgContainer);
+      });
+
+      // Incrementar el contador de solicitudes realizadas
+      requestCount++;
+    })
+    .catch(error => {
+      console.error(error);
+      imagenesContainer.innerHTML = '<p>Error al generar las imágenes.</p>';
+    });
+  });
+});
+  </script>
+  
+<footer class="footer text-center">
+  <div class="container">
+    <p>&copy; 2023 - Galeria by Kiliart</p>
+  </div>
+</footer>
+
+</body>
+</html>
