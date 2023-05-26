@@ -61,15 +61,15 @@
           <a class="nav-link" href="#">Servicios</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://wa.me/525552132072?text=Hola%20tengo%20preguntas">Contacto</a>
+          <a class="nav-link" href="#">Contacto</a>
         </li>
       </ul>
     </div>
   </nav>
 
   <div class="container">
-    <h1>Conoce Galer I.A.</h1>
-    <p>Imagina, escribe, elige, imprime en HD tu obra y recibela en tu casa montada en un bastidor </p>
+    <h1>Conoce galer.I.A.</h1>
+    <p>Imagina, escribe, elige, nosotros imprimimos en HD tu obra y la envíamos a tu casa montada en un bastidor</p>
     <div class="container" id="promptContainer">
       <div class="row">
         <div class="col">
@@ -98,7 +98,7 @@
   var requestCount = 0;
 
   generarBtn.addEventListener('click', function() {
-    if (requestCount >= 2) {
+    if (requestCount >= 5) {
           alert('Has alcanzado el límite máximo de generaciones de imágenes.');
           return;
         }
@@ -112,7 +112,7 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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' // Reemplaza <TU_CLAVE_DE_API> con tu clave de API
+        'Authorization': 'Bearer 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' // Reemplaza <TU_CLAVE_DE_API> con tu clave de API
       },
       body: JSON.stringify({
         prompt: prompt,
@@ -153,9 +153,6 @@
 
         imagenesContainer.appendChild(imgContainer);
       });
-
-      // Incrementar el contador de solicitudes realizadas
-      requestCount++;
     })
     .catch(error => {
       console.error(error);
@@ -164,7 +161,6 @@
   });
 });
   </script>
-  
 <footer class="footer text-center">
   <div class="container">
     <p>&copy; 2023 - Galeria by Kiliart</p>
